@@ -30,30 +30,6 @@ minecraft {
     // Use non-default mappings at your own risk. they may not always work.
     // simply re-run your setup task after changing the mappings to update your workspace.
     mappings = "snapshot_20171003"
-    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
-    
-    //srgExtra "PK: org/ejml your/new/package/here/ejml"
-    //srgExtra "PK: org/ejml/alg your/new/package/here/ejml/alg"
-    /*  
-    srgExtra "PK: org/httpcore org.apache.http.HttpResponse"
-    srgExtra "PK: org/httpclient org.apache.http.client.HttpClient"
-    srgExtra "PK: org/httpclient org.apache.http.client.methods.HttpPost"
-    srgExtra "PK: org/httpcore org.apache.http.entity.StringEntity"
-    srgExtra "PK: org/httpcore org.apache.http.impl.client.DefaultHttpClient"*/
-    
-    /* srgExtra "PK: org/apache/http/http/httpresponse com/mcserversoft/mcsscommunicatormod/org/apache/http/httpresponse"
-    srgExtra "PK: org/apache/http/client/httpclient com/mcserversoft/mcsscommunicatormod/org/apache/http/client/httpclient"
-    srgExtra "PK: org/apache/http/client/methods/httppost com/mcserversoft/mcsscommunicatormod/org/apache/http/client/methods/httppost"
-    srgExtra "PK: org/apache/http/entity/stringentity com/mcserversoft/mcsscommunicatormod/org/apache/http/client/stringentity"
-    srgExtra "PK: org/apache/http/impl/client/defaulthttpclient com/mcserversoft/mcsscommunicatormod/org/apache/http/impl/client/defaulthttpclient"*/
-    
-    /* "PK: org/apache/http/http/httpresponse com/mcserversoft/mcsscommunicatormod/org/apache/http/httpresponse"
-    "PK: org/apache/http/client/httpclient com/mcserversoft/mcsscommunicatormod/org/apache/http/client/httpclient"
-    "PK: org/apache/http/client/methods/httppost com/mcserversoft/mcsscommunicatormod/org/apache/http/client/methods/httppost"
-    "PK: org/apache/http/entity/stringentity com/mcserversoft/mcsscommunicatormod/org/apache/http/client/stringentity"
-    "PK: org/apache/http/impl/client/defaulthttpclient com/mcserversoft/mcsscommunicatormod/org/apache/http/impl/client/defaulthttpclient"*/
-    
-    //"PK: org/apache/http/ com/mcserversoft/mcsscommunicatormod/org/apache/http"
 }
 
 configurations {
@@ -65,51 +41,12 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    // you may put jars on which you depend on in ./libs
-    // or you may define them like so..
-    //compile "some.group:artifact:version:classifier"
-    //compile "some.group:artifact:version"
-      
-    shade "com.squareup.okhttp3:okhttp:4.0.1"
-    
-     
-    /* shade 'org.apache.httpcomponents:httpcore:4.4.11'
-    shade 'org.apache.httpcomponents:httpclient:4.5.9'
-    shade 'commons-logging:commons-logging:1.2'*/
-    
-    
-    /*
-    compile 'org.apache.httpcomponents:httpcore:4.3.2'
-    compile 'org.apache.httpcomponents:httpclient:4.3.3'*/
-    
-    /* compile files('lib/httpcore-4.4.11.jar')
-    compile files('lib/httpclient-4.5.9.jar')*/
-    
-    
-    // real examples
-    //compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
-    //compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env
-
-
-    // the 'provided' configuration is for optional dependencies that exist at compile-time but might not at runtime.
-    //provided 'com.mod-buildcraft:buildcraft:6.0.8:dev'
-
-    // the deobf configurations:  'deobfCompile' and 'deobfProvided' are the same as the normal compile and provided,
-    // except that these dependencies get remapped to your current MCP mappings
-    //deobfCompile 'com.mod-buildcraft:buildcraft:6.0.8:dev'
-    //deobfProvided 'com.mod-buildcraft:buildcraft:6.0.8:dev'
-
-    // for more info...
-    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
-    // http://www.gradle.org/docs/current/userguide/dependency_management.html
-
+dependencies {      
+    shade "com.squareup.okhttp3:okhttp:4.0.1"  
 }
 
 reobf {
     jar {
-        /* extraLines "PK: org/apache/commons com/mcserversoft/mcsscommunicatormod/org/apache/commons"
-        extraLines "PK: org/apache/http com/mcserversoft/mcsscommunicatormod/org/apache/http"*/
         extraLines "PK: com.squareup.okhttp3 com/mcserversoft/mcsscommunicatormod/com/squareup/okhttp3"
     }
 }
@@ -120,10 +57,6 @@ jar {
             exclude 'META-INF', 'META-INF/**'
         }
     }
-  /*
-    manifest{
-        attributes 'TweakClass': 'com.mcserversoft.mcsscommunicatormod.com.squareup.okhttp3'
-    }*/
 }
 
 processResources {
