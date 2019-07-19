@@ -1,8 +1,9 @@
 package com.mcserversoft.mcsscommunicatormod;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.mcserversoft.mcsscommunicatormod.utils.IOUtils;
+import java.io.File;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
+import net.minecraftforge.fml.common.Loader;
 import org.apache.logging.log4j.Logger;
 
 public class Config {
@@ -11,14 +12,38 @@ public class Config {
     private String serverGUID;
 
     private Logger logger;
+    private static Configuration configuration;
 
-    public Config(Logger logger) {
+    Config(Logger logger) {
         this.logger = logger;
-    }
 
-   public Config(String url, String serverGUID) {
-        this.url = url;
-        this.serverGUID = serverGUID;
+        File configFile = new File(Loader.instance().getConfigDir(), "mcsscommunicatormod/mcsscommunicatormod.cfg");
+        configuration = new Configuration(configFile);
+
+        try {
+            configuration.load();
+
+            Property urlProperty = configuration.get(Configuration.CATEGORY_GENERAL,
+                    "url",
+                    "\"{0}\"",
+                    "url of the mcss internal webserver");
+
+            Property serverGUIDProperty = configuration.get(Configuration.CATEGORY_GENERAL,
+                    "serverGUID",
+                    "\"{1}\"",
+                    "GUID of the mcss server");
+
+            // trim quotes from url
+            this.url = urlProperty.toString().replace("\"", "");
+            this.serverGUID = serverGUIDProperty.getString().replace("\"", "");
+
+        } catch (Exception ex) {
+            logger.info(String.format("Could not read config file: (%s)", ex.getCause()));
+        } finally {
+            if (configuration.hasChanged()) {
+                configuration.save();
+            }
+        }
     }
 
     public String getUrl() {
@@ -28,17 +53,4 @@ public class Config {
     public String getServerGUID() {
         return this.serverGUID;
     }
-
-   /* public void LoadFromDisk() {
-        try {
-            JsonParser parser = new JsonParser();
-            JsonObject json = IOUtils.ymlReader("config.yml");
-
-            this.url = json.get("url").getAsString();
-            this.serverGUID = json.get("serverGUID").getAsString();
-
-        } catch (Exception e) {
-            logger.warn("Could not determine the version of MCSS, this could cause problems...");
-        }
-    }*/
 }

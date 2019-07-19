@@ -5,7 +5,6 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
 import org.apache.logging.log4j.Logger;
 
-
 public class EventListener {
 
     private final EventProcessor eventProcessor;

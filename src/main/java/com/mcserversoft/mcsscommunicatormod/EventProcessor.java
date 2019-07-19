@@ -26,7 +26,7 @@ public class EventProcessor {
     }
 
     private PlayerDTO createPlayerDTO(EntityPlayer player) {
-        String username = player.getDisplayName().toString();
+        String username = player.getDisplayName().getUnformattedText();
         String uuid = player.getUniqueID().toString();
         String serverGuid = config.getServerGUID();
 
