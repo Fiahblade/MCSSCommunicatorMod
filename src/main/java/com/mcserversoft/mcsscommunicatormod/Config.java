@@ -17,7 +17,7 @@ public class Config {
     Config(Logger logger) {
         this.logger = logger;
 
-        File configFile = new File(Loader.instance().getConfigDir(), "mcsscommunicatormod/mcsscommunicatormod.cfg");
+        File configFile = new File(Loader.instance().getConfigDir(), "MCSSCommunicatorMod/MCSSCommunicatorMod.cfg");
         configuration = new Configuration(configFile);
 
         try {
