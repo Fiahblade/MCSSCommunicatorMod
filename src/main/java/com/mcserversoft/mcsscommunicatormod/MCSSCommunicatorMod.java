@@ -31,7 +31,7 @@ public class MCSSCommunicatorMod {
     @EventHandler
     public void init(FMLInitializationEvent event) {
         logger.info("Powering your Minecraft Server since Beta 1.5");
-        logger.info("> Core-element of MC Server Soft. ");
+        logger.info("> Core-element of MC Server Soft.");
         logger.info("> Provides real-time diagnostics and server telemetry.");
         logger.info(String.format("For more info visit: %s", MCSSCommunicatorMod.WEBSITE));
         logger.info(String.format("Server version: %s", ForgeVersion.getVersion()));

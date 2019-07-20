@@ -24,7 +24,7 @@ public class Config {
             Property urlProperty = configuration.get(Configuration.CATEGORY_GENERAL,
                     "url",
                     "\"{0}\"",
-                    "url of the mcss internal webserver");
+                    "URL of the mcss internal webserver");
 
             Property serverGUIDProperty = configuration.get(Configuration.CATEGORY_GENERAL,
                     "serverGUID",
@@ -57,6 +57,7 @@ public class Config {
     public String getServerGUID() {
         return this.serverGUID;
     }
+    
     public boolean getIsDebugEnabled() {
         return this.debug;
     }
