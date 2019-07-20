@@ -57,6 +57,7 @@ public class Config {
     public String getServerGUID() {
         return this.serverGUID;
     }
+
     public boolean getIsDebugEnabled() {
         return this.debug;
     }
