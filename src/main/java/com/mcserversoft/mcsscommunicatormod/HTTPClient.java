@@ -24,7 +24,7 @@ public class HTTPClient {
 
         boolean success = setUrl(config.getUrl());
         if (!success) {
-            setUrl("http://localhost:9696/api");
+            setUrl("http://localhost:25560/api");
         }
     }
 
