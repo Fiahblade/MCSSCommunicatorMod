@@ -10,9 +10,9 @@ public class EventProcessor {
     private final Config config;
     private final HTTPClient client;
 
-    public EventProcessor(Config config, Logger logger) {
+    public EventProcessor(Logger logger, Config config) {
         this.config = config;
-        this.client = new HTTPClient(config.getUrl(), logger);
+        this.client = new HTTPClient(logger, config.getUrl());
     }
 
     public void playerLogin(EntityPlayer player) {

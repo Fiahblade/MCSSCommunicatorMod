@@ -8,17 +8,14 @@ import org.apache.logging.log4j.Logger;
 
 public class Config {
 
+    private Configuration configuration;
+
     private String url;
     private String serverGUID;
 
-    private Logger logger;
-    private static Configuration configuration;
-
     Config(Logger logger) {
-        this.logger = logger;
-
         File configFile = new File(Loader.instance().getConfigDir(), "MCSSCommunicatorMod/MCSSCommunicatorMod.cfg");
-        configuration = new Configuration(configFile);
+        this.configuration = new Configuration(configFile);
 
         try {
             configuration.load();
@@ -33,12 +30,12 @@ public class Config {
                     "\"{1}\"",
                     "GUID of the mcss server");
 
-            // trim quotes from url
-            this.url = urlProperty.toString().replace("\"", "");
+            // trim quotes from strings
+            this.url = urlProperty.getString().replace("\"", "");
             this.serverGUID = serverGUIDProperty.getString().replace("\"", "");
 
         } catch (Exception ex) {
-            logger.info(String.format("Could not read config file: (%s)", ex.getCause()));
+            logger.warn(String.format("Could not read config file: (%s)", ex.getCause()));
         } finally {
             if (configuration.hasChanged()) {
                 configuration.save();

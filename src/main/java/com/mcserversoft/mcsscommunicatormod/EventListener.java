@@ -9,8 +9,8 @@ public class EventListener {
 
     private final EventProcessor eventProcessor;
 
-    public EventListener(Config config, Logger logger) {
-        this.eventProcessor = new EventProcessor(config, logger);
+    public EventListener(Logger logger, Config config) {
+        this.eventProcessor = new EventProcessor(logger, config);
     }
 
     @SubscribeEvent

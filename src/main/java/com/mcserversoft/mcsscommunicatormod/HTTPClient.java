@@ -10,12 +10,12 @@ import org.apache.logging.log4j.Logger;
 
 public class HTTPClient {
 
-    public static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
+    public final MediaType JSON = MediaType.get("application/json; charset=utf-8");
+    private final Logger logger;
 
     private URL baseUrl;
-    private Logger logger;
 
-    public HTTPClient(String url, Logger logger) {
+    public HTTPClient(Logger logger, String url) {
         this.logger = logger;
 
         boolean success = setUrl(url);
@@ -28,7 +28,7 @@ public class HTTPClient {
         try {
             this.baseUrl = new URL(url);
         } catch (MalformedURLException ex) {
-            logger.error("Failed to parse url from config File. Will use the default value.");
+            logger.warn("Failed to parse url from config File. Will use the default value.");
             return false;
         }
         return true;
@@ -38,12 +38,11 @@ public class HTTPClient {
 
         try {
             String url = String.format("%s/%s", baseUrl, path);
-            
+
             /*
              logger.info(json);
              logger.info(url);
              */
-            
             OkHttpClient client = new OkHttpClient();
 
             RequestBody body = RequestBody.create(JSON, json);

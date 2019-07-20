@@ -2,7 +2,6 @@ package com.mcserversoft.mcsscommunicatormod;
 
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -17,12 +16,8 @@ public class MCSSCommunicatorMod {
     public static final String WEBSITE = "https://www.mcserversoft.com";
     public static final String VERSION = "1.0";
 
-    public static Configuration configuration;
-
-    private static Logger logger;
-
-    private static Config config;
-    private EventListener eventListener;
+    private Logger logger;
+    private Config config;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
@@ -30,7 +25,7 @@ public class MCSSCommunicatorMod {
         this.config = new Config(logger);
 
         // Register EventListener
-        MinecraftForge.EVENT_BUS.register(new EventListener(config, logger));
+        MinecraftForge.EVENT_BUS.register(new EventListener(logger, config));
     }
 
     @EventHandler
@@ -40,6 +35,6 @@ public class MCSSCommunicatorMod {
         logger.info("> Provides real-time diagnostics and server telemetry.");
         logger.info(String.format("For more info visit: %s", MCSSCommunicatorMod.WEBSITE));
         logger.info(String.format("Server version: %s", ForgeVersion.getVersion()));
-        logger.info(String.format("MCSSCommunicator version: %s", MCSSCommunicatorMod.VERSION));
+        logger.info(String.format("MCSSCommunicatorMod version: %s", MCSSCommunicatorMod.VERSION));
     }
 }
