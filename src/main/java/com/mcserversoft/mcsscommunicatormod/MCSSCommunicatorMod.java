@@ -14,7 +14,7 @@ public class MCSSCommunicatorMod {
     public static final String MODID = "mcsscommunicatormod";
     public static final String NAME = "MCSSCommunicatorMod";
     public static final String WEBSITE = "https://www.mcserversoft.com";
-    public static final String VERSION = "1.0";
+    public static final String VERSION = "10.0";
 
     private Logger logger;
     private Config config;
