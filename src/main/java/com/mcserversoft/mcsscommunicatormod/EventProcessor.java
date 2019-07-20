@@ -7,12 +7,12 @@ import org.apache.logging.log4j.Logger;
 
 public class EventProcessor {
 
-    private final Config config;
     private final HTTPClient client;
+    private final String serverGUID;
 
     public EventProcessor(Logger logger, Config config) {
-        this.config = config;
-        this.client = new HTTPClient(logger, config.getUrl());
+        this.serverGUID = config.getServerGUID();
+        this.client = new HTTPClient(logger, config);
     }
 
     public void playerLogin(EntityPlayer player) {
@@ -28,7 +28,7 @@ public class EventProcessor {
     private PlayerDTO createPlayerDTO(EntityPlayer player) {
         String username = player.getDisplayName().getUnformattedText();
         String uuid = player.getUniqueID().toString();
-        String serverGuid = config.getServerGUID();
+        String serverGuid = serverGUID;
 
         PlayerDTO playerDTO = new PlayerDTO();
         playerDTO.setUsername(username);
