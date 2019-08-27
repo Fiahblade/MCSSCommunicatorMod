@@ -1,67 +1,105 @@
 package com.mcserversoft.mcsscommunicatormod;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 import org.apache.logging.log4j.Logger;
 
 public class HTTPClient {
+	private final Logger logger;
+	private final boolean debug;
 
-    private final Logger logger;
-    private final boolean debug;
+	private URL baseUrl;
 
-    private URL baseUrl;
+	public HTTPClient(Logger logger, Config config) {
+		this.logger = logger;
+		this.debug = config.getIsDebugEnabled();
 
-    public HTTPClient(Logger logger, Config config) {
-        this.logger = logger;
-        this.debug = config.getIsDebugEnabled();
+		boolean success = setUrl(config.getUrl());
+		if (!success) {
+			setUrl("http://localhost:25560/api");
+		}
+	}
 
-        boolean success = setUrl(config.getUrl());
-        if (!success) {
-            setUrl("http://localhost:25560/api");
-        }
-    }
+	private boolean setUrl(String url) {
+		try {
+			this.baseUrl = new URL(url);
+		} catch (MalformedURLException ex) {
+			logger.warn("Failed to parse url from config File. Will use the default value.");
+			return false;
+		}
+		return true;
+	}
 
-    private boolean setUrl(String url) {
-        try {
-            this.baseUrl = new URL(url);
-        } catch (MalformedURLException ex) {
-            logger.warn("Failed to parse url from config File. Will use the default value.");
-            return false;
-        }
-        return true;
-    }
+	public String executePost(String path, String json) {
+		URL url;
+		HttpURLConnection connection = null;
+		try {
+			// Create connection
+			url = new URL(path);
+			connection = (HttpURLConnection) url.openConnection();
+			connection.setRequestMethod("POST");
+			connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
 
-    public void post(String path, String json) {
+			connection.setRequestProperty("Content-Length", "" + Integer.toString(json.getBytes().length));
+			connection.setRequestProperty("Content-Language", "en-US");
 
-        try {
-            String url = String.format("%s/%s", baseUrl, path);
+			connection.setUseCaches(false);
+			connection.setDoInput(true);
+			connection.setDoOutput(true);
 
-            if (debug) {
-                logger.info(String.format("[DEBUG] %s", json));
-                logger.info(String.format("[DEBUG] %s", url));
-            }
+			// Send request
+			DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+			wr.writeBytes(json);
+			wr.flush();
+			wr.close();
 
-            OkHttpClient client = new OkHttpClient();
+			// Get Response
+			InputStream is = connection.getInputStream();
+			BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+			String line;
+			StringBuffer response = new StringBuffer();
+			while ((line = rd.readLine()) != null) {
+				response.append(line);
+				response.append('\r');
+			}
+			rd.close();
+			return response.toString();
 
-            RequestBody body = RequestBody.Companion.create(json, okhttp3.MediaType.get("application/json; charset=utf-8"));
-            Request request = new Request.Builder()
-                    .url(url)
-                    .post(body)
-                    .build();
+		} catch (Exception e) {
 
-            try (Response response = client.newCall(request).execute()) {
-                if (debug) {
-                    logger.info(String.format("[DEBUG] %s", response.body().string()));
-                    logger.info(String.format("[DEBUG] %s", response.code()));
-                }
-            }
+			e.printStackTrace();
+			return null;
 
-        } catch (Exception ex) {
-            logger.error(String.format("Failed to post data to mcss: ", ex.getMessage()));
-        }
-    }
+		} finally {
+
+			if (connection != null) {
+				connection.disconnect();
+			}
+		}
+	}
+
+	public void post(String path, String json) {
+
+		try {
+			String url = String.format("%s/%s", baseUrl, path);
+
+			if (debug) {
+				logger.info(String.format("[DEBUG] %s", json));
+				logger.info(String.format("[DEBUG] %s", url));
+			}
+
+			String response = executePost(url, json);
+			if (debug) {
+				logger.info(String.format("[DEBUG] %s", response));
+			}
+
+		} catch (Exception ex) {
+			logger.error(String.format("Failed to post data to mcss: ", ex.getMessage()));
+		}
+	}
 }
