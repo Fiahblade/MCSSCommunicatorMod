@@ -1,12 +1,12 @@
 package com.mcserversoft.mcsscommunicatormod;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
+import java.io.OutputStream;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Logger;
 
 public class HTTPClient {
@@ -35,52 +35,22 @@ public class HTTPClient {
 		return true;
 	}
 
-	public String executePost(String path, String json) {
-		URL url;
-		HttpURLConnection connection = null;
-		try {
-			// Create connection
-			url = new URL(path);
-			connection = (HttpURLConnection) url.openConnection();
-			connection.setRequestMethod("POST");
-			connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+	public static String executePost(String url, String param) throws Exception {
+		String charset = "UTF-8";
+		URLConnection connection = new URL(url).openConnection();
+		connection.setDoOutput(true); // Triggers POST.
+		connection.setRequestProperty("Accept-Charset", charset);
+		connection.setRequestProperty("Content-Type", "application/json;charset=" + charset);
 
-			connection.setRequestProperty("Content-Length", "" + Integer.toString(json.getBytes().length));
-			connection.setRequestProperty("Content-Language", "en-US");
-
-			connection.setUseCaches(false);
-			connection.setDoInput(true);
-			connection.setDoOutput(true);
-
-			// Send request
-			DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
-			wr.writeBytes(json);
-			wr.flush();
-			wr.close();
-
-			// Get Response
-			InputStream is = connection.getInputStream();
-			BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-			String line;
-			StringBuffer response = new StringBuffer();
-			while ((line = rd.readLine()) != null) {
-				response.append(line);
-				response.append('\r');
-			}
-			rd.close();
-			return response.toString();
-
-		} catch (Exception e) {
-
-			e.printStackTrace();
-			return null;
-
-		} finally {
-
-			if (connection != null) {
-				connection.disconnect();
-			}
+		try (OutputStream output = connection.getOutputStream()) {
+			output.write(param.getBytes(charset));
 		}
+
+		InputStream response = connection.getInputStream();
+		StringWriter writer = new StringWriter();
+		IOUtils.copy(response, writer, charset);
+		String theString = writer.toString();
+		return theString;
 	}
 
 	public void post(String path, String json) {
