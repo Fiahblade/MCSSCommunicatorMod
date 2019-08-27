@@ -2,7 +2,6 @@ package com.mcserversoft.mcsscommunicatormod;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -10,8 +9,6 @@ import okhttp3.Response;
 import org.apache.logging.log4j.Logger;
 
 public class HTTPClient {
-
-    public final MediaType JSON = MediaType.get("application/json; charset=utf-8");
 
     private final Logger logger;
     private final boolean debug;
@@ -50,7 +47,7 @@ public class HTTPClient {
 
             OkHttpClient client = new OkHttpClient();
 
-            RequestBody body = RequestBody.create(JSON, json);
+            RequestBody body = RequestBody.Companion.create(json, okhttp3.MediaType.get("application/json; charset=utf-8"));
             Request request = new Request.Builder()
                     .url(url)
                     .post(body)

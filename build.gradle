@@ -35,7 +35,7 @@ minecraft {
 
 configurations {
     shade
-    compile.extendsFrom shade
+    compile.extendsFrom(shade)
 }
 
 repositories {
