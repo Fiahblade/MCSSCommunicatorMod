@@ -1,70 +1,75 @@
 package com.mcserversoft.mcsscommunicatormod;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
+import java.net.URLConnection;
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Logger;
 
 public class HTTPClient {
+	private final Logger logger;
+	private final boolean debug;
 
-    public final MediaType JSON = MediaType.get("application/json; charset=utf-8");
+	private URL baseUrl;
 
-    private final Logger logger;
-    private final boolean debug;
+	public HTTPClient(Logger logger, Config config) {
+		this.logger = logger;
+		this.debug = config.getIsDebugEnabled();
 
-    private URL baseUrl;
+		boolean success = setUrl(config.getUrl());
+		if (!success) {
+			setUrl("http://localhost:25560/api");
+		}
+	}
 
-    public HTTPClient(Logger logger, Config config) {
-        this.logger = logger;
-        this.debug = config.getIsDebugEnabled();
+	private boolean setUrl(String url) {
+		try {
+			this.baseUrl = new URL(url);
+		} catch (MalformedURLException ex) {
+			logger.warn("Failed to parse url from config File. Will use the default value.");
+			return false;
+		}
+		return true;
+	}
 
-        boolean success = setUrl(config.getUrl());
-        if (!success) {
-            setUrl("http://localhost:25560/api");
-        }
-    }
+	public static String executePost(String url, String param) throws Exception {
+		String charset = "UTF-8";
+		URLConnection connection = new URL(url).openConnection();
+		connection.setDoOutput(true); // Triggers POST.
+		connection.setRequestProperty("Accept-Charset", charset);
+		connection.setRequestProperty("Content-Type", "application/json;charset=" + charset);
 
-    private boolean setUrl(String url) {
-        try {
-            this.baseUrl = new URL(url);
-        } catch (MalformedURLException ex) {
-            logger.warn("Failed to parse url from config File. Will use the default value.");
-            return false;
-        }
-        return true;
-    }
+		try (OutputStream output = connection.getOutputStream()) {
+			output.write(param.getBytes(charset));
+		}
 
-    public void post(String path, String json) {
+		InputStream response = connection.getInputStream();
+		StringWriter writer = new StringWriter();
+		IOUtils.copy(response, writer, charset);
+		String theString = writer.toString();
+		return theString;
+	}
 
-        try {
-            String url = String.format("%s/%s", baseUrl, path);
+	public void post(String path, String json) {
 
-            if (debug) {
-                logger.info(String.format("[DEBUG] %s", json));
-                logger.info(String.format("[DEBUG] %s", url));
-            }
+		try {
+			String url = String.format("%s/%s", baseUrl, path);
 
-            OkHttpClient client = new OkHttpClient();
+			if (debug) {
+				logger.info(String.format("[DEBUG] %s", json));
+				logger.info(String.format("[DEBUG] %s", url));
+			}
 
-            RequestBody body = RequestBody.create(JSON, json);
-            Request request = new Request.Builder()
-                    .url(url)
-                    .post(body)
-                    .build();
+			String response = executePost(url, json);
+			if (debug) {
+				logger.info(String.format("[DEBUG] %s", response));
+			}
 
-            try (Response response = client.newCall(request).execute()) {
-                if (debug) {
-                    logger.info(String.format("[DEBUG] %s", response.body().string()));
-                    logger.info(String.format("[DEBUG] %s", response.code()));
-                }
-            }
-
-        } catch (Exception ex) {
-            logger.error(String.format("Failed to post data to mcss: ", ex.getMessage()));
-        }
-    }
+		} catch (Exception ex) {
+			logger.error(String.format("Failed to post data to mcss: ", ex.getMessage()));
+		}
+	}
 }

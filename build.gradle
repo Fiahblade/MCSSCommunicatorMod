@@ -33,32 +33,6 @@ minecraft {
     mappings = "snapshot_20171003"
 }
 
-configurations {
-    shade
-    compile.extendsFrom shade
-}
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {      
-    shade "com.squareup.okhttp3:okhttp:4.0.1"  
-}
-
-reobf {
-    jar {
-        extraLines "PK: com.squareup.okhttp3 com/mcserversoft/mcsscommunicatormod/com/squareup/okhttp3"
-    }
-}
-
-jar {
-    configurations.shade.each { dep ->
-        from(project.zipTree(dep)){
-            exclude 'META-INF', 'META-INF/**'
-        }
-    }
-}
 
 processResources {
     // this will ensure that this task is redone when the versions change.
